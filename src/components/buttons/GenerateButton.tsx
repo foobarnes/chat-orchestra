@@ -1,3 +1,4 @@
+import { DEFAULT_PROMPT_VARIABLE_STRING } from "@/components/prompt/Prompt";
 import { usePromptTemplate } from "@/components/prompt/PromptTemplateProvider";
 import { useResponses } from "@/components/responses/ResponsesProvider";
 import { useVariables } from "@/components/variables/VariablesProvider";
@@ -8,7 +9,7 @@ import {
   Icon,
   useStyleConfig,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MdAdd } from "react-icons/md";
 
 interface GenerateButtonProps extends ButtonProps {
@@ -30,6 +31,10 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
     variant: "solid",
     colorScheme: "green",
   });
+
+  const doesPromptIncludeVariable = useMemo(() => {
+    return promptTemplate?.includes(DEFAULT_PROMPT_VARIABLE_STRING);
+  }, [promptTemplate]);
 
   const handleGenerateClick = async () => {
     setAreResponsesLoading(true);
@@ -57,7 +62,6 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
       }
 
       const responseData = await response.json();
-      console.log(responseData);
       setResponses(responseData.responses);
       return responseData.responses;
     } catch (error) {
@@ -74,7 +78,9 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
       isLoading={areResponsesLoading}
       loadingText="Generating..."
       isDisabled={
-        areResponsesLoading || !promptTemplate || variables.length === 0
+        areResponsesLoading ||
+        !doesPromptIncludeVariable ||
+        variables.length === 0
       }
       rounded="full"
       minWidth="10rem"

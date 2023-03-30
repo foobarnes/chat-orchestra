@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 
 import { NavBar } from "@/components/nav/NavBar";
 import { NavTabsBar } from "@/components/nav/NavTabsBar";
@@ -11,17 +11,30 @@ interface LayoutProps {
 
 export const AppLayout = ({ children }: LayoutProps) => {
   return (
-    <>
-      <NavBar />
-      <NavTabsBar />
-      <Box maxW="1500px" mx="auto" px={4} py={8}>
+    <Flex minH="calc(100vh)" w="full" flexDirection="column">
+      <Flex w="full" flexDirection="column">
+        <NavBar />
+        <NavTabsBar />
+      </Flex>
+
+      <Flex
+        maxW="1500px"
+        h="full"
+        w="full"
+        flex="1"
+        mx="auto"
+        px={4}
+        py={8}
+        // align="center"  
+        justify="center"
+      >
         {children}
-      </Box>
+      </Flex>
       <Box as="footer" bg="gray.100" py={4}>
         <Box maxW="1200px" mx="auto" textAlign="center">
           <Footer />
         </Box>
       </Box>
-    </>
+    </Flex>
   );
 };

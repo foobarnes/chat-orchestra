@@ -1,69 +1,85 @@
-import { Flex, Box, useColorModeValue, styled } from "@chakra-ui/react";
-import { FaHome, FaSearch, FaHeart, FaUser } from "react-icons/fa";
+import {
+  Box,
+  Tab,
+  TabIndicator,
+  TabList,
+  Tabs,
+  useColorModeValue
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { FaFileAlt, FaKey } from "react-icons/fa";
 
-interface NavTabsBarProps {
-  activeTab?: string;
-  onTabChange?: (tab: string) => void;
-}
-
-export const NavTabsBar = ({ activeTab, onTabChange=()=>{} }: NavTabsBarProps) => {
+export const NavTabsBar = () => {
   const bgColor = useColorModeValue("gray.100", "gray.900");
-  const iconColor = useColorModeValue("gray.500", "gray.300");
-  const activeIconColor = useColorModeValue("teal.500", "teal.200");
-  const textColor = useColorModeValue("gray.500", "gray.300");
   const activeTextColor = useColorModeValue("teal.500", "teal.200");
+  const router = useRouter();
 
   const tabs = [
     {
-      id: "home",
-      label: "Home",
-      icon: <FaHome size={20} color={iconColor} />,
+      id: "generate",
+      label: "Generate",
+      icon: <FaFileAlt size={20} />,
+      path: "/generate",
     },
     {
-      id: "search",
-      label: "Search",
-      icon: <FaSearch size={20} color={iconColor} />,
+      id: "api-key",
+      label: "API Key",
+      icon: <FaKey size={20} />,
+      path: "/api-key",
     },
     {
-      id: "favorites",
-      label: "Favorites",
-      icon: <FaHeart size={20} color={iconColor} />,
-    },
-    {
-      id: "profile",
-      label: "Profile",
-      icon: <FaUser size={20} color={iconColor} />,
+      id: "usage",
+      label: "Usage",
+      icon: <FaKey size={20} />,
+      path: "/usage",
     },
   ];
 
+  const [activeTabIndex, setActiveTabIndex] = useState(
+    tabs.findIndex((tab) => tab.path === router.pathname)
+  );
+
+  const handleTabChange = (index: number) => {
+    setActiveTabIndex(index);
+    router.push(tabs[index].path);
+  };
+
   return (
-    <Flex
-      bg={bgColor}
-      px={4}
-      py={2}
-      position="sticky"
-      top="0"
-      zIndex={1}
-      borderBottom="1px solid"
-      borderColor={useColorModeValue("gray.200", "gray.700")}
-      align="center"
-    >
-      {tabs.map((tab) => (
-        <Box
-          key={tab.id}
-          display="flex"
-          alignItems="center"
-          p={2}
-          borderBottom={activeTab === tab.id ? "2px solid" : "none"}
-          borderColor={activeTab === tab.id ? activeTextColor : "transparent"}
-          color={activeTab === tab.id ? activeTextColor : textColor}
-          _hover={{ cursor: "pointer", color: activeTextColor }}
-          onClick={() => onTabChange(tab.id)}
+    <Box bg={bgColor} position="sticky" top="0" zIndex={1}>
+      <Tabs
+        isLazy
+        defaultIndex={activeTabIndex}
+        onChange={handleTabChange}
+        variant="unstyled"
+      >
+        <TabList
+          borderBottom="1px solid"
+          borderColor={useColorModeValue("gray.200", "gray.700")}
         >
-          {tab.icon}
-          <Box ml={2}>{tab.label}</Box>
-        </Box>
-      ))}
-    </Flex>
+          {tabs.map((tab) => (
+            <Tab _selected={{ color: activeTextColor }} key={tab.id}>
+              <Box display="flex" alignItems="center">
+                {tab.icon}
+                <Box ml={2}>{tab.label}</Box>
+              </Box>
+            </Tab>
+          ))}
+          <TabIndicator
+            mt="-1.5px"
+            height="2px"
+            bg="teal.500"
+            borderRadius="1px"
+          />
+        </TabList>
+        {/* <TabPanels>
+          {tabs.map((tab) => (
+            <TabPanel key={tab.id} py={4}>
+              {tab.component}
+            </TabPanel>
+          ))}
+        </TabPanels> */}
+      </Tabs>
+    </Box>
   );
 };

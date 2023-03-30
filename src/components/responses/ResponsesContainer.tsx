@@ -9,7 +9,7 @@ export const ResponsesContainer: FC<ResponsesContainerProps> = () => {
   const { responses, areResponsesLoading } = useResponses();
 
   // Determine the number of columns based on the screen size
-  const numColumns = useBreakpointValue({ base: 1, md: 2 });
+  const numColumns = useBreakpointValue({ base: 1, md: 2 }) || 1;
 
   // Split the responses into an array of arrays based on the number of columns
   const responsesArray = Array.from({ length: numColumns }, (_, index) =>

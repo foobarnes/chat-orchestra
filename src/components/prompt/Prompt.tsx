@@ -1,12 +1,9 @@
 import { usePromptTemplate } from "@/components/prompt/PromptTemplateProvider";
 import {
-  Box,
   Button,
   Card,
   Flex,
   FormControl,
-  FormHelperText,
-  FormLabel,
   Heading,
   Kbd,
   Text,
@@ -16,17 +13,9 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-interface PromptProps {
-  label: string;
-  helperText?: string;
-  defaultInput?: string;
-}
+export const DEFAULT_PROMPT_VARIABLE_STRING = "{input}";
 
-export const Prompt = ({
-  label,
-  helperText,
-  defaultInput = "",
-}: PromptProps) => {
+const Prompt = () => {
   // const [promptTemplate, setPromptTemplate] = useState<string>(defaultInput);
   const { promptTemplate, setPromptTemplate } = usePromptTemplate();
   const { onCopy, hasCopied } = useClipboard(promptTemplate);
@@ -35,7 +24,9 @@ export const Prompt = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleInsertClick = useCallback(() => {
-    setPromptTemplate((oldPromptValue) => `${oldPromptValue}{input}`);
+    setPromptTemplate(
+      (oldPromptValue) => `${oldPromptValue}${DEFAULT_PROMPT_VARIABLE_STRING}`
+    );
     textareaRef.current?.focus();
   }, [textareaRef, setPromptTemplate]);
 
@@ -68,7 +59,7 @@ export const Prompt = ({
   useEffect(() => {
     const newHighlightedPromptValue = promptTemplate.replace(
       /{input}/g,
-      `<span style="background-color: yellow;">{input}</span>`
+      `<span style="background-color: yellow;">${DEFAULT_PROMPT_VARIABLE_STRING}</span>`
     );
     setHighlightedPromptValue(newHighlightedPromptValue);
   }, [promptTemplate]);
@@ -90,13 +81,11 @@ export const Prompt = ({
     >
       <FormControl>
         <Heading as="h3" fontSize={{ base: "2xl", md: "3xl" }} mb="1">
-          {label}
+          Prompt
         </Heading>
-        {helperText && (
-          <Text fontSize={{ base: "md", md: "lg" }} fontWeight="light" mb="4">
-            {helperText}
-          </Text>
-        )}
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight="light" mb="4">
+          Enter your ChatGPT prompt using template notation
+        </Text>
         <Textarea
           value={promptTemplate}
           onChange={handleInputChange}
@@ -107,9 +96,16 @@ export const Prompt = ({
           ref={textareaRef}
         />
         <Flex justify="flex-end">
-          <Button variant="solid" bg="gray.300" size="sm" onClick={handleInsertClick} mr={2}>
+          <Button
+            variant="solid"
+            bg="gray.300"
+            size="sm"
+            onClick={handleInsertClick}
+            mr={2}
+          >
             <Flex align="center">
-              Insert Input&nbsp;&nbsp;(<Kbd>{isMac ? "⌘" : "Ctrl"} </Kbd>&nbsp;+&nbsp;<Kbd>K</Kbd>)
+              Insert Input&nbsp;&nbsp;(<Kbd>{isMac ? "⌘" : "Ctrl"} </Kbd>
+              &nbsp;+&nbsp;<Kbd>K</Kbd>)
             </Flex>
           </Button>
           <Button
@@ -125,3 +121,5 @@ export const Prompt = ({
     </Card>
   );
 };
+
+export default Prompt;

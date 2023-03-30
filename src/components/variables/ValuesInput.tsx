@@ -39,6 +39,31 @@ export const ValuesInput = ({ label, placeholder }: ValuesInputProps) => {
     }
   };
 
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    const clipboardData = event.clipboardData?.getData("text");
+    if (clipboardData) {
+      const parsedValues = clipboardData
+        .split(/[\n,]/)
+        .map((val) => val.trim());
+
+        console.log(`parsedValues: `, parsedValues);
+        console.log(`clipboardData: `, clipboardData);
+
+      let variablesToSet = [];
+      for (const parsedValue of parsedValues) {
+        if (!variables.some((val) => val.value === parsedValue)) {
+          const randomColor =
+            tagColors[Math.floor(Math.random() * tagColors.length)];
+          variablesToSet.push({ value: parsedValue, color: randomColor });
+        }
+      }
+      setVariables([...variables, ...variablesToSet]);
+      setTimeout(() => {
+        setInputValue("");
+      });
+    }
+  };
+
   const handleTagClose = (value: string) => {
     removeVariable(value);
   };
@@ -85,6 +110,7 @@ export const ValuesInput = ({ label, placeholder }: ValuesInputProps) => {
           placeholder={placeholder}
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
+          onPaste={handlePaste}
           mr={2}
           bg={bgColor}
           color={textColor}

@@ -48,14 +48,14 @@ export default async function handler(
             completion?.data?.choices[0]?.message?.content ||
             "No response found.";
 
-          responses.push({variable, response});
+          responses.push({ variable, response });
         })
       );
 
       res.status(200).json({ responses });
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = (error as Error).message;
-      res.status(error.response.status).json({ error: errorMessage });
+      res.status(error.response?.status || 500).json({ error: errorMessage });
     }
   } else {
     res.status(404).json({ error: "Not found" });

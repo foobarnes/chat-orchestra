@@ -1,13 +1,14 @@
-import ApiKeyInput from "@/components/api/ApiKeyInput";
 import { GenerateButton } from "@/components/buttons/GenerateButton";
-import { Footer } from "@/components/nav/Footer";
-import { Prompt } from "@/components/prompt/Prompt";
+const Prompt = dynamic(() => import("@/components/prompt/Prompt") as any, {
+  ssr: false,
+});
 import { PromptTemplateProvider } from "@/components/prompt/PromptTemplateProvider";
 import { ResponsesContainer } from "@/components/responses/ResponsesContainer";
 import { ResponsesProvider } from "@/components/responses/ResponsesProvider";
 import { ValuesInput } from "@/components/variables/ValuesInput";
 import { VariablesProvider } from "@/components/variables/VariablesProvider";
 import { Flex, Grid, GridItem, useBreakpointValue } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 
 function GeneratePage() {
   const isLargeScreen = useBreakpointValue({ base: false, md: true });
@@ -35,16 +36,14 @@ function GeneratePage() {
             gridTemplateRows={gridTemplateRows}
             gridTemplateColumns={gridTemplateColumns}
             minHeight="80vh"
+            w="full"
             gap="1"
             color="blackAlpha.700"
             fontWeight="bold"
           >
             <GridItem p="2" py="10" area={"prompt"}>
-              {/* <ApiKeyInput apiKey="sasjdfaslkdfasdbckl" /> */}
               <Flex align="start" justify="center" w="full" h="full">
                 <Prompt
-                  label="Prompt"
-                  helperText="Enter your ChatGPT prompt using template notation"
                 />
               </Flex>
             </GridItem>

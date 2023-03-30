@@ -1,35 +1,33 @@
 import {
-  Flex,
   Box,
+  Flex,
   Heading,
   Spacer,
-  Link,
-  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export const NavBar = () => {
   const bgColor = useColorModeValue("gray.100", "gray.900");
   const textColor = useColorModeValue("gray.900", "gray.100");
 
   return (
-    <Flex bg={bgColor} p={4} align="center">
+    <Flex bg={bgColor} p={4} w="full" align="center">
       <Box>
         <Heading size="md" color={textColor}>
-          ChatOrchestra
+          parallel||chat
         </Heading>
       </Box>
       <Spacer />
       <Box>
-        <Link mx={2} href="#" color={textColor}>
-          Link 1
-        </Link>
-        <Link mx={2} href="#" color={textColor}>
-          Link 2
-        </Link>
-        <Button mx={2} colorScheme="teal">
-          Sign Up
-        </Button>
+        <SignedIn>
+          {/* Mount the UserButton component */}
+          <UserButton showName appearance={{}} />
+        </SignedIn>
+        <SignedOut>
+          {/* Signed out users get sign in button */}
+          <SignInButton />
+        </SignedOut>
       </Box>
     </Flex>
   );

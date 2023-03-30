@@ -10,7 +10,7 @@ export const Footer = () => {
       flexDir={{ base: "column", md: "row" }}
     >
       <Text>
-        Made with ❤️ by Chandler Barnes — ChatOrchestra ©
+        Made with ❤️ by Chandler Barnes — parallel||chat ©
         {new Date().getFullYear()}
       </Text>
       <Flex>
