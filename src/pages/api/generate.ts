@@ -1,3 +1,4 @@
+import { getAuth } from "@clerk/nextjs/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
 
@@ -22,7 +23,19 @@ export default async function handler(
   res: NextApiResponse<GenerateResponse | ErrorResponse>
 ) {
   if (req.method === "POST") {
-    const { prompt, model = "gpt-3.5-turbo" } = req.body as GenerateRequest;
+    const { prompt, model = "gpt-3.5-turbo", apiKey } = req.body as GenerateRequest;
+
+    if (apiKey) {
+      // TODO: verify api key
+      // return res.status(200).json({ error: "API Authorized!" });
+    } else {
+      const { userId } = getAuth(req);
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+    }
+
     const configuration = new Configuration({
       apiKey: OPENAI_API_KEY,
     });

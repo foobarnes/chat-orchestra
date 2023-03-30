@@ -1,3 +1,4 @@
+import { getAuth } from "@clerk/nextjs/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
 
@@ -27,7 +28,22 @@ export default async function handler(
       promptTemplate,
       variables,
       model = "gpt-3.5-turbo",
+      apiKey
     } = req.body as BatchGenerateRequest;
+
+    console.log(`type of req.body: `, typeof req.body);
+    console.log(`apiKey: `, apiKey);
+
+    if (apiKey) {
+      // TODO: verify api key
+      // return res.status(200).json({ error: "API Authorized!" });
+    } else {
+      const { userId } = getAuth(req);
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+    }
 
     const configuration = new Configuration({
       apiKey: OPENAI_API_KEY,
