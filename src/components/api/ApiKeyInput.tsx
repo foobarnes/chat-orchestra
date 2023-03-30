@@ -1,13 +1,12 @@
-import { useState } from "react";
 import {
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  IconButton,
-  Button,
+  useClipboard,
 } from "@chakra-ui/react";
-import { FaEye, FaEyeSlash, FaCopy } from "react-icons/fa";
-import { useClipboard } from "@chakra-ui/react";
+import { useState } from "react";
+import { FaCopy, FaEye, FaEyeSlash } from "react-icons/fa";
 
 type ApiKeyInputProps = {
   apiKey: string;
@@ -30,13 +29,8 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
         value={apiKey}
         isReadOnly
       />
-      <InputRightElement
-        width="max-content"
-        gap="0.25rem"
-        pr="0.5rem"
-      >
-        <Button>{showApiKey ? 'hide' : 'show'}</Button>
-        {/* <IconButton
+      <InputRightElement width="max-content" gap="0.25rem" pr="0.5rem">
+        <IconButton
           h="1.75rem"
           size="sm"
           aria-label={showApiKey ? "Hide API key" : "Show API key"}
@@ -49,9 +43,8 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
           aria-label={hasCopied ? "API key copied!" : "Copy API key"}
           icon={<FaCopy />}
           onClick={onCopy}
-        /> */}
+        />
       </InputRightElement>
     </InputGroup>
   );
 };
-
