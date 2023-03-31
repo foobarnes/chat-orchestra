@@ -43,15 +43,15 @@ export const ValuesInput = ({ label, placeholder }: ValuesInputProps) => {
     const clipboardData = event.clipboardData?.getData("text");
     if (clipboardData) {
       const parsedValues = clipboardData
-        .split(/[\n,]/)
+        .split(/[\n,\r\t]/)
         .map((val) => val.trim());
-
-        console.log(`parsedValues: `, parsedValues);
-        console.log(`clipboardData: `, clipboardData);
 
       let variablesToSet = [];
       for (const parsedValue of parsedValues) {
-        if (!variables.some((val) => val.value === parsedValue)) {
+        if (
+          parsedValue &&
+          !variables.some((val) => val.value === parsedValue)
+        ) {
           const randomColor =
             tagColors[Math.floor(Math.random() * tagColors.length)];
           variablesToSet.push({ value: parsedValue, color: randomColor });
