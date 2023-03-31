@@ -1,8 +1,11 @@
 import { getAuth } from "@clerk/nextjs/server";
+import { PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const prisma = new PrismaClient();
 
 interface BatchGenerateRequest {
   promptTemplate: string;
@@ -28,21 +31,36 @@ export default async function handler(
       promptTemplate,
       variables,
       model = "gpt-3.5-turbo",
-      apiKey
+      apiKey,
     } = req.body as BatchGenerateRequest;
 
-    console.log(`type of req.body: `, typeof req.body);
-    console.log(`apiKey: `, apiKey);
-
     if (apiKey) {
-      // TODO: verify api key
-      // return res.status(200).json({ error: "API Authorized!" });
+      const existingApiKey = await prisma.userApiKey.findUnique({
+        where: {
+          apiKey: apiKey,
+        },
+      });
+      if (!existingApiKey) {
+        res.status(401).json({ error: "Invalid API key" });
+        return;
+      }
+      // TODO: Check if API key is valid with subscription?
     } else {
       const { userId } = getAuth(req);
       if (!userId) {
         res.status(401).json({ error: "Unauthorized" });
         return;
       }
+    }
+
+    if (!promptTemplate) {
+      res.status(400).json({ error: "Prompt template is required" });
+      return;
+    }
+
+    if (!variables || variables.length === 0) {
+      res.status(400).json({ error: "Variables are required" });
+      return;
     }
 
     const configuration = new Configuration({
@@ -68,6 +86,7 @@ export default async function handler(
         })
       );
 
+      //TODO: For each response, log a usage to the database
       res.status(200).json({ responses });
     } catch (error: any) {
       const errorMessage = (error as Error).message;
